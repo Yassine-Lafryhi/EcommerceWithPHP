@@ -1,0 +1,6 @@
+###
+GET http://localhost:6980/api/api.php?get=products&offset=1
+
+###
+GET http://localhost:6980/api/api.php?get=products&number
+
