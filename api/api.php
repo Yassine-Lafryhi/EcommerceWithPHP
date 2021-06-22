@@ -130,5 +130,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             header('Content-Type: application/json');
             echo json_encode($array, JSON_PRETTY_PRINT);
         }
+    }else if($post === 'login'){
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $message = array();
+        $element = R::findOne('users', "email = ?", array($email));
+        if ($element !== null) {
+            $retrieved_password = $element->password;
+            if (sha1($password) === $retrieved_password) {
+                $message = array(
+                    "code" => 1,
+                    "id" => $element->id
+                );
+            } else {
+                $message = array(
+                    "code" => 2
+                );
+            }
+        }
+        header('Content-Type: application/json');
+        echo json_encode($message, JSON_PRETTY_PRINT);
     }
 }

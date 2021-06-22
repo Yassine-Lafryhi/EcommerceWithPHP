@@ -89,8 +89,6 @@ if (session_status() === PHP_SESSION_NONE) {
 <script>
     getCartElements();
 </script>
-
-
 </body>
 </html>
 

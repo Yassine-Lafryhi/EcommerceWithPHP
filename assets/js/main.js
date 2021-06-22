@@ -1,13 +1,13 @@
 var productsNumber = 0;
 var number = 0;
 
-function searchForProducts(){
+function searchForProducts() {
     let query = document.getElementById("query").value;
     $.ajax({
         url: '/api/api.php?get=search&query=' + query,
         type: 'GET',
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             $('#all-products').html('');
             for (var i = 0; i < data.length; i++) {
                 let element = '<div style="text-align: center" class="col-md-4">' +
@@ -30,12 +30,13 @@ function searchForProducts(){
         }
     });
 }
+
 function getProductsList(offset) {
     $.ajax({
         url: '/api/api.php?get=products&offset=',
         type: 'GET',
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             $('#all-products').html('');
             for (var i = 0; i < data.length; i++) {
                 let element = '<div style="text-align: center" class="col-md-4">' +
@@ -89,7 +90,7 @@ function getProductsNumber() {
         url: '/api/api.php?get=products&number',
         type: 'GET',
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             console.log(data);
             productsNumber = parseInt(data.message);
             getNextProducts();
@@ -103,9 +104,9 @@ function getCartItemsNumber() {
         url: '/api/api.php?get=cartCount',
         type: 'GET',
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             let number = data.number;
-            document.getElementById("viewCart").innerText = 'View cart ('+number+')';
+            document.getElementById("viewCart").innerText = 'View cart (' + number + ')';
         }
     });
 }
@@ -120,8 +121,8 @@ function addProductToCart(id) {
         url: '/api/api.php',
         type: 'POST',
         dataType: 'json',
-        data:JSON.stringify(body),
-        success: function(data) {
+        data: JSON.stringify(body),
+        success: function (data) {
             if (data.code === 1) {
                 Swal.fire({
                     position: 'center',
@@ -152,8 +153,8 @@ function incrementQuantity(id) {
         url: '/api/api.php',
         type: 'POST',
         dataType: 'json',
-        data:JSON.stringify(body),
-        success: function(data) {
+        data: JSON.stringify(body),
+        success: function (data) {
             if (data.code === 1) {
                 Swal.fire({
                     position: 'center',
@@ -178,8 +179,8 @@ function decrementQuantity(id) {
         url: '/api/api.php?get=cart',
         type: 'POST',
         dataType: 'json',
-        data:JSON.stringify(body),
-        success: function(data) {
+        data: JSON.stringify(body),
+        success: function (data) {
             if (data.code === 1) {
                 Swal.fire({
                     position: 'center',
@@ -200,32 +201,136 @@ function getCartElements() {
         url: '/api/api.php?get=cart',
         type: 'GET',
         dataType: 'json',
-        success: function(data) {
+        success: async function (data) {
             for (var j = 0; j < data.length; j += 1) {
-                addCartItemToTable(data, j)
+                await addCartItemToTable(data, j)
             }
         }
     });
 }
 
-function addCartItemToTable(data, j) {
+async function addCartItemToTable(data, j) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/api/api.php?get=product&id=' + data[j].product,
+            type: 'GET',
+            dataType: 'json',
+            success: function (product) {
+                var tr;
+                $('#list').html('');
+                for (var i = 0; i < data.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td style='text-align: center'>" + (i + 1) + "</td>");
+                    tr.append("<td style='text-align: center'>" + product.name + "</td>");
+                    tr.append("<td style='text-align: center'>" + product.price + " $ </td>");
+                    tr.append("<td style='text-align: center'>" + data[i].quantity + "</td>");
+                    tr.append("<td style='text-align: center'>" + (data[i].quantity * product.price) + " $ </td>");
+                    tr.append("<td style='text-align: center'><button onclick='updateUser(" + data[i].id + ")' style='margin-right: 8px' class=\"btn btn-warning btn-round\" type=\"button\">Update</button><button onclick='deleteUser(" + data[i].id + ")' class=\"btn btn-danger btn-round\" type=\"button\">Delete</button></td>")
+                    $('#list').append(tr);
+                }
+            }
+        });
+    });
+}
+
+function register() {
+    let firstName = document.getElementById("firstName").value;
+    let lastName = document.getElementById("lastName").value;
+    let address = document.getElementById("address").value;
+    let phoneNumber = document.getElementById("phoneNumber").value;
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+    if (firstName.toString().trim() === '' ||
+        lastName.toString().trim() === '' ||
+        address.toString().trim() === '' ||
+        phoneNumber.toString().trim() === '' ||
+        email.toString().trim() === '' ||
+        password.toString().trim() === '') {
+        Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            title: 'Please fill in all the fields !',
+            showConfirmButton: false,
+            timer: 2000
+        });
+        return;
+    }
+    const body = {
+        post: 'register',
+        firstName: firstName,
+        lastName: lastName,
+        address: address,
+        phoneNumber: phoneNumber,
+        email: email,
+        password: password
+    }
     $.ajax({
-        url: '/api/api.php?get=product&id=' + data[j].product,
-        type: 'GET',
+        url: '/api/api.php',
+        type: 'POST',
         dataType: 'json',
-        success: function(product) {
-            var tr;
-            $('#list').html('');
-            for (var i = 0; i < data.length; i++) {
-                tr = $('<tr/>');
-                tr.append("<td style='text-align: center'>" + (i + 1) + "</td>");
-                tr.append("<td style='text-align: center'>" + product.name + "</td>");
-                tr.append("<td style='text-align: center'>" + product.price + " $ </td>");
-                tr.append("<td style='text-align: center'>" + data[i].quantity + "</td>");
-                tr.append("<td style='text-align: center'>" + (data[i].quantity * product.price) + " $ </td>");
-                tr.append("<td style='text-align: center'><button onclick='updateUser(" + data[i].id + ")' style='margin-right: 8px' class=\"btn btn-warning btn-round\" type=\"button\">Update</button><button onclick='deleteUser(" + data[i].id + ")' class=\"btn btn-danger btn-round\" type=\"button\">Delete</button></td>")
-                $('#list').append(tr);
+        data: JSON.stringify(body),
+        success: function (data) {
+            if (data.code === 1) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Your account is created successfully !',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then((result) => {
+                    location.href = 'login.php';
+                });
             }
         }
     });
+}
+
+function login() {
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+    if (email.toString().trim() === '' || password.toString().trim() === '') {
+        Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            title: 'Please fill in all the fields !',
+            showConfirmButton: false,
+            timer: 2000
+        })
+    } else {
+        const body = {
+            post:'login',
+            email: email,
+            password: password
+        }
+        $.ajax({
+            url: '/api/api.php',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify(body),
+            success: function (data) {
+                if (data.code === 1) {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Logged in successfully !',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then((result) => {
+                        let id = data.id;
+                        cookie.set('id', id);
+                        window.location.href = "cart.php";
+                    });
+                } else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'The given information are incorrect !',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then((result) => {
+                    });
+                }
+            }
+        });
+    }
 }
