@@ -4,3 +4,45 @@ GET http://localhost:6980/api/api.php?get=products&offset=1
 ###
 GET http://localhost:6980/api/api.php?get=products&number
 
+###
+GET http://localhost:6980/api/api.php?get=cart
+
+###
+POST http://localhost:6980/api/api.php
+Content-Type: application/json
+
+{
+  "post": "cart",
+  "product": 9,
+  "quantity": 3
+}
+
+###
+POST http://localhost:6980/api/api.php
+Content-Type: application/json
+
+{
+  "post": "increment",
+  "product": 2
+}
+
+###
+POST http://localhost:6980/api/api.php
+Content-Type: application/json
+
+{
+  "post": "decrement",
+  "product": 2
+}
+
+###
+GET http://localhost:6980/api/api.php?get=product&id=373642
+
+###
+GET http://localhost:6980/api/api.php?get=cartCount
+
+###
+GET http://localhost:6980/api/api.php?get=emptyCart
+
+###
+GET http://localhost:6980/api/api.php?get=search&query=pitch

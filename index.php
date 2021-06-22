@@ -20,8 +20,8 @@ session_start();
     <div class="main-panel" id="main-panel">
         <div class="content">
             <center>
-                <button onclick="logout()" class="btn btn-danger btn-round"
-                        type="button">Log out
+                <button id="viewCart" onclick="location.href='cart.php'" class="btn btn-danger btn-round"
+                        type="button">View cart
                 </button>
             </center>
             <br>
@@ -32,6 +32,23 @@ session_start();
                             <h4 style="text-align: center" class="card-title">Products List</h4>
                         </div>
                         <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+
+                                </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Search here for products"
+                                           id="query">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <button id="next" class="btn btn-round btn-info" onclick="searchForProducts()">Search
+                                    </button>
+                                </div>
+                            </div>
+                            </div>
                             <div style="text-align: center" class="col-md-12">
                                 <h4>Pagination</h4>
                                 <button id="previous" class="btn btn-round btn-success"
@@ -67,6 +84,7 @@ session_start();
 
 <script>
     getProductsNumber();
+    getCartItemsNumber();
 </script>
 
 </body>
