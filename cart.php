@@ -35,9 +35,12 @@ if (session_status() === PHP_SESSION_NONE) {
                         </div>
                         <div class="card-body">
                             <div style="text-align: center" class="col-md-12">
-                                    <button onclick="logout()" class="btn btn-success btn-round"
-                                            type="button">Check out
-                                    </button>
+                                <button onclick="logout()" class="btn btn-success btn-round"
+                                        type="button">Check out
+                                </button>
+                                <button onclick="logout()" class="btn btn-danger btn-round"
+                                        type="button">Empty the shopping cart
+                                </button>
                             </div>
                             <br>
                             <div class="table-responsive">

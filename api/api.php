@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $phoneNumber = $_POST['phoneNumber'];
         $password = $_POST['password'];
         $address = $_POST['address'];
-        $element = R::dispense('users');
+        $element = R::dispense('clients');
         $element->firstName = $firstName;
         $element->lastName = $lastName;
         $element->email = $email;
@@ -134,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $email = $_POST['email'];
         $password = $_POST['password'];
         $message = array();
-        $element = R::findOne('users', "email = ?", array($email));
+        $element = R::findOne('clients', "email = ?", array($email));
         if ($element !== null) {
             $retrieved_password = $element->password;
             if (sha1($password) === $retrieved_password) {

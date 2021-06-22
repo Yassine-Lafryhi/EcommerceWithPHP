@@ -170,6 +170,42 @@ function incrementQuantity(id) {
     });
 }
 
+function incrementQuantityOnCart(id) {
+    const body = {
+        post: 'increment',
+        product: id
+    }
+    $.ajax({
+        url: '/api/api.php',
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(body),
+        success: function (data) {
+            if (data.code === 1) {
+                getCartElements();
+            }
+        }
+    });
+}
+
+function decrementQuantityOnCart(id) {
+    const body = {
+        post: 'decrement',
+        product: id
+    }
+    $.ajax({
+        url: '/api/api.php',
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(body),
+        success: function (data) {
+            if (data.code === 1) {
+                getCartElements();
+            }
+        }
+    });
+}
+
 function decrementQuantity(id) {
     const body = {
         post: 'decrement',
@@ -201,35 +237,35 @@ function getCartElements() {
         url: '/api/api.php?get=cart',
         type: 'GET',
         dataType: 'json',
-        success: async function (data) {
+        success: function (data) {
+            $('#list').html('');
             for (var j = 0; j < data.length; j += 1) {
-                await addCartItemToTable(data, j)
+                addCartItemToTable(data, j)
             }
         }
     });
 }
 
-async function addCartItemToTable(data, j) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/api/api.php?get=product&id=' + data[j].product,
-            type: 'GET',
-            dataType: 'json',
-            success: function (product) {
-                var tr;
-                $('#list').html('');
-                for (var i = 0; i < data.length; i++) {
-                    tr = $('<tr/>');
-                    tr.append("<td style='text-align: center'>" + (i + 1) + "</td>");
-                    tr.append("<td style='text-align: center'>" + product.name + "</td>");
-                    tr.append("<td style='text-align: center'>" + product.price + " $ </td>");
-                    tr.append("<td style='text-align: center'>" + data[i].quantity + "</td>");
-                    tr.append("<td style='text-align: center'>" + (data[i].quantity * product.price) + " $ </td>");
-                    tr.append("<td style='text-align: center'><button onclick='updateUser(" + data[i].id + ")' style='margin-right: 8px' class=\"btn btn-warning btn-round\" type=\"button\">Update</button><button onclick='deleteUser(" + data[i].id + ")' class=\"btn btn-danger btn-round\" type=\"button\">Delete</button></td>")
-                    $('#list').append(tr);
-                }
-            }
-        });
+function addCartItemToTable(data, j) {
+    $.ajax({
+        url: '/api/api.php?get=product&id=' + data[j].product,
+        type: 'GET',
+        dataType: 'json',
+        success: function (product) {
+            var tr;
+            tr = $('<tr/>');
+            tr.append("<td style='text-align: center'>" + (j + 1) + "</td>");
+            tr.append("<td style='text-align: center'>" + product.name + "</td>");
+            tr.append("<td style='text-align: center'>" + product.price + " $ </td>");
+            tr.append("<td style='text-align: center'>" + data[j].quantity + "</td>");
+            tr.append("<td style='text-align: center'>" + (data[j].quantity * product.price) + " $ </td>");
+            tr.append("<td style='text-align: center'>" +
+                "<button style='margin-right: 8px' onclick='incrementQuantityOnCart(" + product.sku + ")' class=\"btn btn-success btn-round\" type=\"button\">+</button>" +
+                "<button style='margin-right: 8px' onclick='deleteUser(" + data[j].id + ")' class=\"btn btn-danger btn-round\" type=\"button\">Delete Item</button>" +
+                "<button style='margin-right: 8px' onclick='decrementQuantityOnCart(" + product.sku + ")' class=\"btn btn-warning btn-round\" type=\"button\">-</button>" +
+                "</td>")
+            $('#list').append(tr);
+        }
     });
 }
 
@@ -298,7 +334,7 @@ function login() {
         })
     } else {
         const body = {
-            post:'login',
+            post: 'login',
             email: email,
             password: password
         }
