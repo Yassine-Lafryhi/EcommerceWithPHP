@@ -282,6 +282,54 @@ function emptyCart() {
     });
 }
 
+function checkout() {
+    var clientId = cookie.get('id');
+    if (clientId === undefined) {
+        location.href = 'register.php';
+    } else {
+        const body = {
+            post: 'command',
+            client: clientId
+        }
+        $.ajax({
+            url: '/api/api.php',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify(body),
+            success: function (data) {
+                if (data.code === 1) {
+                    $.ajax({
+                        url: '/api/api.php?get=cart',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (cart) {
+                            $('#list').html('');
+                            for (var j = 0; j < cart.length; j += 1) {
+                                const item = {
+                                    post: 'checkout',
+                                    client: clientId,
+                                    command: data.id,
+                                    product: cart[j].product,
+                                    quantity: cart[j].quantity,
+                                }
+                                $.ajax({
+                                    url: '/api/api.php',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: JSON.stringify(item),
+                                    success: function (data) {
+
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+}
+
 function register() {
     let firstName = document.getElementById("firstName").value;
     let lastName = document.getElementById("lastName").value;

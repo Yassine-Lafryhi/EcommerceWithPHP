@@ -19,6 +19,10 @@
                 <div class="col-md-3">
                 </div>
                 <div class="col-md-6">
+                    <center><button onclick="location.href='login.php'" class="btn btn-primary btn-round"
+                                    type="button">Log in
+                        </button></center>
+                    <br>
                     <div class="card">
                         <div class="card-header">
                             <h5 style="text-align: center" class="title">Register</h5>

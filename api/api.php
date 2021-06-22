@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             header('Content-Type: application/json');
             echo json_encode($array, JSON_PRETTY_PRINT);
         }
-    }else if($post === 'login'){
+    } else if ($post === 'login') {
         $email = $_POST['email'];
         $password = $_POST['password'];
         $message = array();
@@ -150,5 +150,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
         header('Content-Type: application/json');
         echo json_encode($message, JSON_PRETTY_PRINT);
+    } else if ($post === 'command') {
+        $element = R::dispense('commands');
+        $element->date = date('d-m-Y');
+        $element->time = date('H:i:s');
+        $element->status = "PENDING";
+        $id = R::store($element);
+        if ($id > 0) {
+            $message = array(
+                "code" => 1,
+                "id" => $id,
+            );
+            header('Content-Type: application/json');
+            echo json_encode($message, JSON_PRETTY_PRINT);
+        }
+    }else if ($post === 'checkout') {
+        $element = R::dispense('commanditem');
+        $element->client = $_POST['client'];
+        $element->command = $_POST['command'];
+        $element->product = $_POST['product'];
+        $element->quantity = $_POST['quantity'];
+        $id = R::store($element);
+        if ($id > 0) {
+            $message = array(
+                "code" => 1,
+            );
+            header('Content-Type: application/json');
+            echo json_encode($message, JSON_PRETTY_PRINT);
+        }
     }
 }

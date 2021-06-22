@@ -35,7 +35,7 @@ if (session_status() === PHP_SESSION_NONE) {
                         </div>
                         <div class="card-body">
                             <div style="text-align: center" class="col-md-12">
-                                <button onclick="logout()" class="btn btn-success btn-round"
+                                <button onclick="checkout()" class="btn btn-success btn-round"
                                         type="button">Check out
                                 </button>
                                 <button onclick="emptyCart()" class="btn btn-danger btn-round"
@@ -88,6 +88,7 @@ if (session_status() === PHP_SESSION_NONE) {
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="assets/js/main.js"></script>
+<script src="assets/js/cookie.umd.min.js"></script>
 
 <script>
     getCartElements();
