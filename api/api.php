@@ -83,13 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $_SESSION['cart'] = array();
         }
         $cart = $_SESSION['cart'];
+        $newQuantity = 0;
         foreach ($cart as $key => &$value) {
             if ($value['product'] == $product) {
                 $value['quantity'] += 1;
+                $newQuantity = $value['quantity'];
             }
         }
         $_SESSION['cart'] = $cart;
-        $array = array("code" => 1);
+        $array = array("code" => 1, "quantity" => $newQuantity);
         header('Content-Type: application/json');
         echo json_encode($array, JSON_PRETTY_PRINT);
     } else if ($post === 'decrement') {
@@ -98,12 +100,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $_SESSION['cart'] = array();
         }
         $cart = $_SESSION['cart'];
+        $newQuantity = 0;
         foreach ($cart as $key => &$value) {
             if ($value['product'] == $product) {
                 $value['quantity'] -= 1;
+                $newQuantity = $value['quantity'];
                 if ($value['quantity'] == 0) {
                     unset($cart[$key]);
                 }
+            }
+        }
+        $_SESSION['cart'] = $cart;
+        $array = array("code" => 1, "quantity" => $newQuantity);
+        header('Content-Type: application/json');
+        echo json_encode($array, JSON_PRETTY_PRINT);
+    } else if ($post === 'delete') {
+        $product = $_POST['product'];
+        $cart = $_SESSION['cart'];
+        foreach ($cart as $key => &$value) {
+            if ($value['product'] == $product) {
+                unset($cart[$key]);
             }
         }
         $_SESSION['cart'] = $cart;
@@ -164,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             header('Content-Type: application/json');
             echo json_encode($message, JSON_PRETTY_PRINT);
         }
-    }else if ($post === 'checkout') {
+    } else if ($post === 'checkout') {
         $element = R::dispense('commanditem');
         $element->client = $_POST['client'];
         $element->command = $_POST['command'];

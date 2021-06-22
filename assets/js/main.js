@@ -19,9 +19,9 @@ function searchForProducts() {
                     '<p><img src="' + 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=battlecreek-coffee-roasters-rsnzc-8dVs0-unsplash.jpgs' + '"width="180px" /></p> ' +
                     '<p>' + data[i].price + ' $ </p>' +
                     '<button id="addToCartButton' + data[i].sku + '" class="btn btn-round btn-success" onclick="addProductToCart(' + data[i].sku + ')">Add to cart</button><br>' +
-                    '<button id="incrementQuantity' + data[i].sku + '" style="display:none;margin-top: 8px" class="btn btn-round btn-danger" onclick="incrementQuantity(' + data[i].sku + ')">-</button>' +
+                    '<button id="incrementQuantity' + data[i].sku + '" style="display:none;margin-top: 8px" class="btn btn-round btn-danger" onclick="decrementQuantity(' + data[i].sku + ')">-</button>' +
                     '<span style="margin-top: 8px; margin-left: 12px;display:none;margin-right: 12px">Quantity: ' + 1 + '</span>' +
-                    '<button id="decrementQuantity' + data[i].sku + '" style="display:none;margin-top: 8px" class="btn btn-round btn-info" onclick="decrementQuantity(' + data[i].sku + ')">+</button><br>' +
+                    '<button id="decrementQuantity' + data[i].sku + '" style="display:none;margin-top: 8px" class="btn btn-round btn-info" onclick="incrementQuantity(' + data[i].sku + ')">+</button><br>' +
                     '</div>' +
                     '</div>' +
                     '</div>';
@@ -40,17 +40,19 @@ function getProductsList(offset) {
             $('#all-products').html('');
             for (var i = 0; i < data.length; i++) {
                 let element = '<div style="text-align: center" class="col-md-4">' +
-                    '<div style="height: 380px; margin-bottom: 12px" class="card">' +
+                    '<div style="height: 420px; margin-bottom: 12px" class="card">' +
                     '<div class="card-header">' +
                     '<h5 style="text-align: center" class="card-title">' + data[i].name + '</h5>' +
                     '</div>' +
                     '<div class="card-body">' +
                     '<p><img src="' + 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=battlecreek-coffee-roasters-rsnzc-8dVs0-unsplash.jpgs' + '"width="180px" /></p> ' +
-                    '<p>' + data[i].price + ' $ </p>' +
+                    '<p>Price : ' + data[i].price + ' $ </p>' +
+                    '<p>Type : ' + data[i].type + '</p>' +
+                    '<p>Manufacturer : ' + data[i].manufacturer + '</p>' +
                     '<button id="addToCartButton' + data[i].sku + '" class="btn btn-round btn-success" onclick="addProductToCart(' + data[i].sku + ')">Add to cart</button><br>' +
-                    '<button id="incrementQuantity' + data[i].sku + '" style="display:none;margin-top: 8px" class="btn btn-round btn-danger" onclick="incrementQuantity(' + data[i].sku + ')">-</button>' +
-                    '<span style="margin-top: 8px; margin-left: 12px;display:none;margin-right: 12px">Quantity: ' + 1 + '</span>' +
-                    '<button id="decrementQuantity' + data[i].sku + '" style="display:none;margin-top: 8px" class="btn btn-round btn-info" onclick="decrementQuantity(' + data[i].sku + ')">+</button><br>' +
+                    '<button id="incrementQuantity' + data[i].sku + '" style="display:none;margin-top: 8px" class="btn btn-round btn-danger" onclick="decrementQuantity(' + data[i].sku + ')">-</button>' +
+                    '<span id="quantity' + data[i].sku + '" style="margin-top: 8px; margin-left: 12px;display:none;margin-right: 12px">Quantity: ' + 1 + '</span>' +
+                    '<button id="decrementQuantity' + data[i].sku + '" style="display:none;margin-top: 8px" class="btn btn-round btn-info" onclick="incrementQuantity(' + data[i].sku + ')">+</button><br>' +
                     '</div>' +
                     '</div>' +
                     '</div>';
@@ -135,9 +137,11 @@ function addProductToCart(id) {
                     let button = document.getElementById("addToCartButton" + id);
                     let increment = document.getElementById("incrementQuantity" + id);
                     let decrement = document.getElementById("decrementQuantity" + id);
+                    let quantity = document.getElementById("quantity" + id);
                     button.style.display = 'none';
                     increment.style.display = 'inline-block';
                     decrement.style.display = 'inline-block';
+                    quantity.style.display = 'inline-block';
                 });
             }
         }
@@ -156,15 +160,8 @@ function incrementQuantity(id) {
         data: JSON.stringify(body),
         success: function (data) {
             if (data.code === 1) {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: 'This product is added successfully to your cart !',
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then((result) => {
-
-                });
+                let span = document.getElementById("quantity" + id);
+                span.innerText = "Quantity : "+data.quantity;
             }
         }
     });
@@ -212,21 +209,32 @@ function decrementQuantity(id) {
         product: id
     }
     $.ajax({
-        url: '/api/api.php?get=cart',
+        url: '/api/api.php',
         type: 'POST',
         dataType: 'json',
         data: JSON.stringify(body),
         success: function (data) {
             if (data.code === 1) {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: 'This product is added successfully to your cart !',
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then((result) => {
+                let span = document.getElementById("quantity" + id);
+                span.innerText = "Quantity : "+data.quantity;
+            }
+        }
+    });
+}
 
-                });
+function deleteItem(id) {
+    const body = {
+        post: 'delete',
+        product: id
+    }
+    $.ajax({
+        url: '/api/api.php',
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(body),
+        success: function (data) {
+            if (data.code === 1) {
+              getCartElements();
             }
         }
     });
@@ -261,7 +269,7 @@ function addCartItemToTable(data, j) {
             tr.append("<td style='text-align: center'>" + (data[j].quantity * product.price) + " $ </td>");
             tr.append("<td style='text-align: center'>" +
                 "<button style='margin-right: 8px' onclick='incrementQuantityOnCart(" + product.sku + ")' class=\"btn btn-success btn-round\" type=\"button\">+</button>" +
-                "<button style='margin-right: 8px' onclick='deleteUser(" + data[j].id + ")' class=\"btn btn-danger btn-round\" type=\"button\">Delete Item</button>" +
+                "<button style='margin-right: 8px' onclick='deleteItem(" + product.sku + ")' class=\"btn btn-danger btn-round\" type=\"button\">Delete Item</button>" +
                 "<button style='margin-right: 8px' onclick='decrementQuantityOnCart(" + product.sku + ")' class=\"btn btn-warning btn-round\" type=\"button\">-</button>" +
                 "</td>")
             $('#list').append(tr);
