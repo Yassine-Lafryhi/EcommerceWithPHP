@@ -38,7 +38,7 @@ if (session_status() === PHP_SESSION_NONE) {
                                 <button onclick="logout()" class="btn btn-success btn-round"
                                         type="button">Check out
                                 </button>
-                                <button onclick="logout()" class="btn btn-danger btn-round"
+                                <button onclick="emptyCart()" class="btn btn-danger btn-round"
                                         type="button">Empty the shopping cart
                                 </button>
                             </div>

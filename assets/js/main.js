@@ -269,6 +269,19 @@ function addCartItemToTable(data, j) {
     });
 }
 
+function emptyCart() {
+    $.ajax({
+        url: '/api/api.php?get=emptyCart',
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            if (data.code === 1) {
+                getCartElements();
+            }
+        }
+    });
+}
+
 function register() {
     let firstName = document.getElementById("firstName").value;
     let lastName = document.getElementById("lastName").value;
